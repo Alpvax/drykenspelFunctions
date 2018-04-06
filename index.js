@@ -6,19 +6,19 @@ firebase.initializeApp();
 exports.createUser = functions.auth.user().onCreate((user) => {
   let db = firebase.firestore();
   let uref = db.collection("users").doc(user.uid);
-  db.batch()
+  return db.batch()
     .create(uref, {
       //id: user.uid,
       name: user.displayName
     })
     .create(db.collection("usernames").doc(user.displayName), {
-      user: uref
+      user: user.uid
     })
     .commit();
 });
 exports.deleteUser = functions.auth.user().onDelete((user) => {
   let db = firebase.firestore();
-  db.batch()
+  return db.batch()
     .delete(db.collection("users").doc(user.uid))
     .delete(db.collection("usernames").doc(user.displayName))
     .commit();
